@@ -1,0 +1,41 @@
+[ {
+  "id" : "1",
+  "titulo" : "Conferencia de Ingeniería",
+  "fecha" : "2025-06-20",
+  "ubicacion" : "Auditorio Principal",
+  "descripcion" : "Charla sobre nuevas tendencias en ingeniería de software.",
+  "organizadores" : [ "1" ],
+  "asistentes" : [ ]
+}, {
+  "id" : "2",
+  "titulo" : "Reunión de Proyecto",
+  "fecha" : "2025-06-23",
+  "ubicacion" : "Sala de Juntas 2",
+  "descripcion" : "Revisión de hitos y asignación de tareas.",
+  "organizadores" : [ "1" ],
+  "asistentes" : [ ]
+}, {
+  "id" : "3",
+  "titulo" : "Hackathon Interno",
+  "fecha" : "2025-06-24",
+  "ubicacion" : "Laboratorio de Cómputo",
+  "descripcion" : "Competencia de desarrollo de prototipos en 24h.",
+  "organizadores" : [ "1" ],
+  "asistentes" : [ ]
+}, {
+  "id" : "4",
+  "titulo" : "Taller de UX/UI",
+  "fecha" : "2025-06-26",
+  "ubicacion" : "Aula 5",
+  "descripcion" : "Prácticas de diseño centrado en el usuario.",
+  "organizadores" : [ "1" ],
+  "asistentes" : [ ]
+}, {
+  "id" : "6",
+  "titulo" : "Evento Importante",
+  "fecha" : "2025-06-27",
+  "ubicacion" : "Salon Importante",
+  "descripcion" : "Evento sumamente importante",
+  "organizadores" : [ "1" ],
+  "asistentes" : [ ]
+} ]

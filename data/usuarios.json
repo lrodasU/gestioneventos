@@ -1,0 +1,23 @@
+[
+  {
+    "type": "Organizador",
+    "id": "1",
+    "nombre": "Ana Pérez",
+    "passwordHash": "4110bff6",
+    "email": "ana.perez@example.com"
+  },
+  {
+    "type": "Asistente",
+    "id": "2",
+    "nombre": "Juan Gómez",
+    "passwordHash": "e99a18c4",
+    "email": "juan.gomez@example.com"
+  },
+  {
+    "type": "Asistente",
+    "id": "3",
+    "nombre": "José García",
+    "passwordHash": "e99a18c5",
+    "email": "Jose.Garcia@example.com"
+  }
+]
