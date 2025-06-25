@@ -32,7 +32,7 @@ public class Evento {
         this.fecha = Objects.requireNonNull(fecha, "fecha no puede ser null");
         this.ubicacion = Objects.requireNonNull(ubicacion, "ubicación no puede ser null");
         this.descripcion = Objects.requireNonNull(descripcion, "descripción no puede ser null");
-        
+
         Objects.requireNonNull(organizadoresIniciales, "organizadores no puede ser null");
         Objects.requireNonNull(asistentesIniciales, "asistentes no puede ser null");
 
@@ -121,8 +121,8 @@ public class Evento {
     }
 
     public void setAsistentes(List<Asistente> asistentes) {
-        if (asistentes.isEmpty() || asistentes == null) {
-            throw new IllegalArgumentException("Debe haber al menos un asistente");
+        if (asistentes == null) {
+            asistentes = new ArrayList<>();
         }
         this.asistentes.clear();
         this.asistentes.addAll(Objects.requireNonNull(asistentes));

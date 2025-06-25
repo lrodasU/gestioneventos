@@ -16,14 +16,8 @@ public class ListarEventosService {
         this.storage = Objects.requireNonNull(storage);
     }
 
-    // Devuelve la lista de eventos
-    public List<Evento> execute() {
-        return Objects.requireNonNull(storage.loadEventos(),
-                "La lista de eventos cargada no puede ser null");
-    }
-
     // Devuelve la lista de eventos vinculados a un usuario
-    public List<Evento> executeByUsuario(String usuarioId) {
+    public List<Evento> execute(String usuarioId) {
         Objects.requireNonNull(usuarioId, "El id de usuario no puede ser null");
 
         return storage.loadEventos().stream()

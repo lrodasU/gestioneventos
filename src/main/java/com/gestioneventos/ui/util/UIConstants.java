@@ -14,6 +14,8 @@ public final class UIConstants {
     public static final Color BUTTON_BORDER = Color.DARK_GRAY;
     public static final Color ERROR_COLOR = Color.RED;
     public static final Color BACKGROUND_COLOR = Color.WHITE;
+    public static final Color GRID_COLOR = Color.GRAY;
+    public static final Color TOPBAR_COLOR = Color.GRAY;
 
     // Radios
     public static final int FIELD_RADIUS = 15;
@@ -25,8 +27,13 @@ public final class UIConstants {
     public static final float BUTTON_FONT_SIZE = 22f;
     public static final float ERROR_FONT_SIZE = 18f;
 
+    // Tamaños
+    public static final int TABLE_ROW_HEIGHT = 30;
+    public static final int TABLE_COLUMN_WIDTH = 150;
+    public static final int TOPBAR_HEIGHT = 60;
+
     // Margenes/Paddings
-    public static final int FIELD_VERTICAL_PADDING = 5;
+    public static final int FIELD_VERTICAL_PADDING = 10;
     public static final int FIELD_HORIZONTAL_PADDING = 10;
     public static final int BUTTON_VERTICAL_PADDING = 10;
     public static final int BUTTON_HORIZONTAL_PADDING = 20;

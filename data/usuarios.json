@@ -1,23 +1,61 @@
-[
-  {
-    "type": "Organizador",
-    "id": "1",
-    "nombre": "Ana Pérez",
-    "passwordHash": "4110bff6",
-    "email": "ana.perez@example.com"
-  },
-  {
-    "type": "Asistente",
-    "id": "2",
-    "nombre": "Juan Gómez",
-    "passwordHash": "e99a18c4",
-    "email": "juan.gomez@example.com"
-  },
-  {
-    "type": "Asistente",
-    "id": "3",
-    "nombre": "José García",
-    "passwordHash": "e99a18c5",
-    "email": "Jose.Garcia@example.com"
-  }
-]
+[ {
+  "id" : "1",
+  "nombre" : "Ana Pérez",
+  "passwordHash" : "4110bff6",
+  "email" : "ana.perez@example.com",
+  "type" : "Organizador"
+}, {
+  "id" : "2",
+  "nombre" : "Juan Gómez",
+  "passwordHash" : "4110bff6",
+  "email" : "juan.gomez@example.com",
+  "type" : "Asistente"
+}, {
+  "id" : "3",
+  "nombre" : "José García",
+  "passwordHash" : "4110bff6",
+  "email" : "jose.garcia@example.com",
+  "type" : "Asistente"
+}, {
+  "id" : "4",
+  "nombre" : "María Rodríguez",
+  "passwordHash" : "4110bff6",
+  "email" : "maria.rodriguez@example.com",
+  "type" : "Organizador"
+}, {
+  "id" : "5",
+  "nombre" : "Carlos Fernández",
+  "passwordHash" : "4110bff6",
+  "email" : "carlos.fernandez@example.com",
+  "type" : "Organizador"
+}, {
+  "id" : "6",
+  "nombre" : "Lucía Martínez",
+  "passwordHash" : "4110bff6",
+  "email" : "lucia.martinez@example.com",
+  "type" : "Asistente"
+}, {
+  "id" : "7",
+  "nombre" : "Miguel Torres",
+  "passwordHash" : "4110bff6",
+  "email" : "miguel.torres@example.com",
+  "type" : "Asistente"
+}, {
+  "id" : "8",
+  "nombre" : "Elena López",
+  "passwordHash" : "4110bff6",
+  "email" : "elena.lopez@example.com",
+  "type" : "Asistente"
+}, {
+  "id" : "9",
+  "nombre" : "Raúl Sánchez",
+  "passwordHash" : "4110bff6",
+  "email" : "raul.sanchez@example.com",
+  "type" : "Asistente"
+}, {
+  "id" : "10",
+  "nombre" : "Patricia Gómez",
+  "passwordHash" : "4110bff6",
+  "email" : "patricia.gomez@example.com",
+  "type" : "Asistente"
+} ]

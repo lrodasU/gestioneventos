@@ -1,6 +1,7 @@
 package com.gestioneventos.ui.presenter;
 
 import com.gestioneventos.application.AuthService;
+import com.gestioneventos.application.CancelarAsistenciaService;
 import com.gestioneventos.application.CrearEventoService;
 import com.gestioneventos.application.EliminarEventoService;
 import com.gestioneventos.application.ListarEventosService;
@@ -16,8 +17,6 @@ import com.gestioneventos.ui.MainFrame;
 import com.gestioneventos.ui.view.CrearEventoView;
 import com.gestioneventos.ui.view.DashboardView;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,9 +30,8 @@ public class CrearEventoPresenter {
     private final ModificarEventoService modificarSvc;
     private final EliminarEventoService eliminarSvc;
     private final RegistrarAsistenciaService registrarSvc;
+    private final CancelarAsistenciaService cancelarService;
     private final NotificarService notificarSvc;
-    private final List<Organizador> organizadores;
-    private final List<Asistente> asistentes;
     private final CrearEventoView view;
     private final Usuario usuario;
     private final Evento eventoOriginal;
@@ -41,30 +39,28 @@ public class CrearEventoPresenter {
     public CrearEventoPresenter(
             MainFrame mainFrame,
             AuthService authService,
-            ListarEventosService listarSvc,
+            ListarEventosService listarService,
             ListarUsuariosService listarUsuariosService,
-            CrearEventoService crearSvc,
-            ModificarEventoService modificarSvc,
-            EliminarEventoService eliminarSvc,
-            RegistrarAsistenciaService registrarSvc,
-            NotificarService notificarSvc,
-            List<Organizador> organizadores,
-            List<Asistente> asistentes,
+            CrearEventoService crearService,
+            ModificarEventoService modificarService,
+            EliminarEventoService eliminarService,
+            RegistrarAsistenciaService registrarService,
+            CancelarAsistenciaService cancelarService,
+            NotificarService notificarService,
             CrearEventoView view,
             Usuario usuario,
             Evento eventoACambiar // null = modo crear / no null = modo editar
     ) {
         this.mainFrame = mainFrame;
         this.authService = authService;
-        this.listarSvc = listarSvc;
+        this.listarSvc = listarService;
         this.listarUsuariosService = listarUsuariosService;
-        this.crearSvc = crearSvc;
-        this.modificarSvc = modificarSvc;
-        this.eliminarSvc = eliminarSvc;
-        this.registrarSvc = registrarSvc;
-        this.notificarSvc = notificarSvc;
-        this.organizadores = organizadores;
-        this.asistentes = asistentes;
+        this.crearSvc = crearService;
+        this.modificarSvc = modificarService;
+        this.eliminarSvc = eliminarService;
+        this.registrarSvc = registrarService;
+        this.cancelarService = cancelarService;
+        this.notificarSvc = notificarService;
         this.view = view;
         this.usuario = usuario;
         this.eventoOriginal = eventoACambiar;
@@ -74,16 +70,11 @@ public class CrearEventoPresenter {
     }
 
     private void inicializar() {
-        List<Organizador> todosOrgs = listarUsuariosService.executeByOrganizadores();
-        List<Asistente> todosAsis = listarUsuariosService.executeByAsistentes();
+        List<Organizador> orgs = listarUsuariosService.executeByOrganizadores();
+        List<Asistente> asis = listarUsuariosService.executeByAsistentes();
 
-        organizadores.clear();
-        organizadores.addAll(todosOrgs);
-        asistentes.clear();
-        asistentes.addAll(todosAsis);
-
-        view.setOrganizadores(organizadores);
-        view.setAsistentes(asistentes);
+        view.setOrganizadores(orgs);
+        view.setAsistentes(asis);
 
         if (eventoOriginal != null) {
             view.loadEvento(eventoOriginal);
@@ -91,31 +82,23 @@ public class CrearEventoPresenter {
     }
 
     private void bind() {
-        view.onSave(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                guardar();
-            }
-        });
-        view.onCancel(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                navergarAlDashboard();
-            }
-        });
+        view.onSave(() -> guardar());
+        view.onCancel(() -> navergarAlDashboard());
+        view.onVolver(() -> navergarAlDashboard());
     }
 
     private void guardar() {
-        // Filtrar seleccionados
-        List<Organizador> orgs = organizadores.stream()
+        List<Organizador> todosOrgs = listarUsuariosService.executeByOrganizadores();
+        List<Asistente> todosAsis = listarUsuariosService.executeByAsistentes();
+
+        List<Organizador> orgs = todosOrgs.stream()
                 .filter(o -> view.getSelectedOrganizadores().contains(o))
                 .collect(Collectors.toList());
-        List<Asistente> asis = asistentes.stream()
+        List<Asistente> asis = todosAsis.stream()
                 .filter(a -> view.getSelectedAsistentes().contains(a))
                 .collect(Collectors.toList());
 
         if (eventoOriginal == null) {
-            // Crear nuevo evento
             crearSvc.execute(
                     view.getTitulo(),
                     view.getFecha(),
@@ -124,7 +107,6 @@ public class CrearEventoPresenter {
                     orgs,
                     asis);
         } else {
-            // Modificar evento existente
             modificarSvc.execute(
                     eventoOriginal.getId(),
                     view.getTitulo(),
@@ -148,6 +130,7 @@ public class CrearEventoPresenter {
                 modificarSvc,
                 eliminarSvc,
                 registrarSvc,
+                cancelarService,
                 notificarSvc,
                 dashView,
                 usuario);

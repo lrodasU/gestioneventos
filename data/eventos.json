@@ -5,7 +5,7 @@
   "ubicacion" : "Auditorio Principal",
   "descripcion" : "Charla sobre nuevas tendencias en ingeniería de software.",
   "organizadores" : [ "1" ],
-  "asistentes" : [ ]
+  "asistentes" : [ "2", "6" ]
 }, {
   "id" : "2",
   "titulo" : "Reunión de Proyecto",
@@ -13,7 +13,7 @@
   "ubicacion" : "Sala de Juntas 2",
   "descripcion" : "Revisión de hitos y asignación de tareas.",
   "organizadores" : [ "1" ],
-  "asistentes" : [ ]
+  "asistentes" : [ "6" ]
 }, {
   "id" : "3",
   "titulo" : "Hackathon Interno",
@@ -21,21 +21,29 @@
   "ubicacion" : "Laboratorio de Cómputo",
   "descripcion" : "Competencia de desarrollo de prototipos en 24h.",
   "organizadores" : [ "1" ],
-  "asistentes" : [ ]
+  "asistentes" : [ "3" ]
 }, {
   "id" : "4",
   "titulo" : "Taller de UX/UI",
   "fecha" : "2025-06-26",
   "ubicacion" : "Aula 5",
   "descripcion" : "Prácticas de diseño centrado en el usuario.",
-  "organizadores" : [ "1" ],
-  "asistentes" : [ ]
+  "organizadores" : [ "4" ],
+  "asistentes" : [ "3", "6", "7", "9", "10" ]
 }, {
   "id" : "6",
   "titulo" : "Evento Importante",
   "fecha" : "2025-06-27",
   "ubicacion" : "Salon Importante",
   "descripcion" : "Evento sumamente importante",
-  "organizadores" : [ "1" ],
-  "asistentes" : [ ]
+  "organizadores" : [ "1", "4", "5" ],
+  "asistentes" : [ "2", "3", "6", "7", "8", "9", "10" ]
+}, {
+  "id" : "7",
+  "titulo" : "Evento Extramadamente Importante",
+  "fecha" : "2025-06-30",
+  "ubicacion" : "Salón Extremadamente Importante",
+  "descripcion" : "Evento de asuntos extremadamente importantes",
+  "organizadores" : [ "1", "4", "5" ],
+  "asistentes" : [ "2", "3", "6", "7", "8", "9", "10" ]
 } ]

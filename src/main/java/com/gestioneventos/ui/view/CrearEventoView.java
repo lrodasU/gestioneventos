@@ -9,19 +9,17 @@ import com.gestioneventos.ui.component.RoundedSpinner;
 import com.gestioneventos.ui.component.RoundedTextArea;
 import com.gestioneventos.ui.component.RoundedTextField;
 import com.gestioneventos.ui.util.ToggleSelectionModel;
+import com.gestioneventos.ui.util.UIConstants;
 
 import javax.swing.*;
 
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Vista para creación de un nuevo evento.
- */
+// Vista para creación de un nuevo evento.
 public class CrearEventoView extends JPanel {
     private final RoundedTextField tituloField = new RoundedTextField(20);
     private final RoundedTextField ubicacionField = new RoundedTextField(20);
@@ -31,18 +29,31 @@ public class CrearEventoView extends JPanel {
     private final RoundedList<Asistente> asistentesList = new RoundedList<>(new DefaultListModel<>());
     private final RoundedButton guardarButton = new RoundedButton("Guardar Evento");
     private final RoundedButton cancelarButton = new RoundedButton("Cancelar");
+    private final JButton volverButton;
+    private final JLabel headerLabel = new JLabel("Crear Evento", SwingConstants.CENTER);
 
     public CrearEventoView() {
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        JPanel topBar = new JPanel(new BorderLayout());
+        topBar.setBackground(UIConstants.TOPBAR_COLOR);
+        volverButton = new RoundedButton("Volver");
+        topBar.add(volverButton, BorderLayout.WEST);
+        headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD, UIConstants.TITLE_FONT_SIZE));
+        topBar.add(headerLabel, BorderLayout.CENTER);
+        topBar.add(Box.createHorizontalStrut(volverButton.getPreferredSize().width), BorderLayout.EAST);
+        add(topBar, BorderLayout.NORTH);
 
         SpinnerDateModel model = new SpinnerDateModel(new Date(), null, null, java.util.Calendar.DAY_OF_MONTH);
         fechaSpinner = new RoundedSpinner(model);
         JSpinner.DateEditor editor = new JSpinner.DateEditor(fechaSpinner, "yyyy-MM-dd");
         fechaSpinner.setEditor(editor);
 
+        descripcionArea.setLineWrap(true);
+        descripcionArea.setWrapStyleWord(true);
         JScrollPane descScroll = new JScrollPane(descripcionArea);
         descScroll.setBorder(BorderFactory.createEmptyBorder());
+        descScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         // Configurar selección múltiple
         organizadoresList.setSelectionModel(new ToggleSelectionModel());
@@ -125,7 +136,8 @@ public class CrearEventoView extends JPanel {
         seleccionarItemsEnLista(asistentesList, e.getAsistentes());
     }
 
-    // Selecciona en la lista aquellos elementos que aparezcan en la colección proporcionada
+    // Selecciona en la lista aquellos elementos que aparezcan en la colección
+    // proporcionada
     private <T> void seleccionarItemsEnLista(JList<T> lista, List<T> items) {
         ListModel<T> model = lista.getModel();
         ListSelectionModel selModel = lista.getSelectionModel();
@@ -162,11 +174,23 @@ public class CrearEventoView extends JPanel {
         return asistentesList.getSelectedValuesList();
     }
 
-    public void onSave(ActionListener l) {
-        guardarButton.addActionListener(l);
+    public void setModoCrear() {
+        headerLabel.setText("Crear Evento");
     }
 
-    public void onCancel(ActionListener l) {
-        cancelarButton.addActionListener(l);
+    public void setModoModificar() {
+        headerLabel.setText("Modificar Evento");
+    }
+
+    public void onSave(Runnable runnable) {
+        guardarButton.addActionListener(e -> runnable.run());
+    }
+
+    public void onCancel(Runnable runnable) {
+        cancelarButton.addActionListener(e -> runnable.run());
+    }
+
+    public void onVolver(Runnable runnable) {
+        volverButton.addActionListener(e -> runnable.run());
     }
 }

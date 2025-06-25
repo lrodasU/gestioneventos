@@ -1,7 +1,9 @@
 package com.gestioneventos.ui.view;
 
+import com.gestioneventos.ui.component.CustomTable;
 import com.gestioneventos.ui.component.RoundedButton;
 import com.gestioneventos.ui.util.UIConstants;
+import com.gestioneventos.domain.Evento;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -11,32 +13,48 @@ import java.awt.event.MouseEvent;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Consumer;
-import com.gestioneventos.domain.Evento;
 
-// Pantalla principal de la aplicacion
+// Pantalla principal de la aplicación
 public class DashboardView extends JPanel {
-    private final JLabel userLabel = new JLabel();
+    private final JLabel usuarioLabel = new JLabel();
     private final RoundedButton logoutButton = new RoundedButton("Cerrar Sesión");
-    private final RoundedButton createButton = new RoundedButton("Crear Evento");
-    private final JTable eventsTable;
+    private final RoundedButton crearButton = new RoundedButton("Crear Evento");
+    private final RoundedButton detallesButton = new RoundedButton("Ver Detalles");
+    private final JTable eventosTable;
     private final DefaultTableModel tableModel;
+    private Consumer<Integer> doubleClickHandler;
+    private Consumer<Integer> detallesHandler;
 
     public DashboardView() {
         setLayout(new BorderLayout());
 
-        // Barra superior
         JPanel topBar = new JPanel(new BorderLayout());
-        topBar.setBackground(Color.LIGHT_GRAY);
+        topBar.setPreferredSize(new Dimension(0, UIConstants.TOPBAR_HEIGHT));
+        topBar.setBackground(UIConstants.TOPBAR_COLOR);
         topBar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        userLabel.setFont(userLabel.getFont().deriveFont(UIConstants.LABEL_FONT_SIZE));
-        topBar.add(userLabel, BorderLayout.WEST);
+        usuarioLabel.setFont(usuarioLabel.getFont().deriveFont(UIConstants.LABEL_FONT_SIZE));
+        topBar.add(usuarioLabel, BorderLayout.WEST);
         topBar.add(logoutButton, BorderLayout.EAST);
+        add(topBar, BorderLayout.NORTH);
 
-        // Botón crear evento
-        JPanel actionBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
-        actionBar.add(createButton);
+        JPanel actionBar = new JPanel();
+        actionBar.setLayout(new BoxLayout(actionBar, BoxLayout.Y_AXIS));
+        actionBar.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+        
+        Dimension btnSize = crearButton.getPreferredSize();
+        crearButton.setPreferredSize(btnSize);
+        crearButton.setMaximumSize(btnSize);
+        crearButton.setMinimumSize(btnSize);
+        detallesButton.setMaximumSize(btnSize);
+        detallesButton.setMinimumSize(btnSize);
 
-        // Tabla de eventos
+        actionBar.add(crearButton);
+        actionBar.add(Box.createRigidArea(new Dimension(0, 10)));
+        actionBar.add(detallesButton);
+        btnSize = crearButton.getPreferredSize();
+        detallesButton.setPreferredSize(btnSize);
+        add(actionBar, BorderLayout.WEST);
+
         String[] cols = { "Título", "Fecha", "Ubicación", "Estado" };
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
@@ -44,35 +62,36 @@ public class DashboardView extends JPanel {
                 return false;
             }
         };
-        eventsTable = new JTable(tableModel);
-        eventsTable.setFillsViewportHeight(true);
-        JScrollPane scrollPane = new JScrollPane(eventsTable);
+        eventosTable = new CustomTable(tableModel);
+        eventosTable.setFillsViewportHeight(true);
+        JScrollPane scrollPane = new JScrollPane(eventosTable);
 
-        // Detección de doble click en fila
-        eventsTable.addMouseListener(new MouseAdapter() {
+        eventosTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2 && !e.isConsumed()) {
-                    int row = eventsTable.rowAtPoint(e.getPoint());
-                    if (row >= 0) {
-                        fireEventDoubleClick(row);
+                    int row = eventosTable.rowAtPoint(e.getPoint());
+                    if (row >= 0 && doubleClickHandler != null) {
+                        doubleClickHandler.accept(row);
                     }
                 }
             }
         });
 
-        // Agregar todo al layout
-        add(topBar, BorderLayout.NORTH);
-        add(actionBar, BorderLayout.WEST);
         add(scrollPane, BorderLayout.CENTER);
+
+        detallesButton.addActionListener(e -> {
+            int sel = eventosTable.getSelectedRow();
+            if (sel >= 0 && detallesHandler != null) {
+                detallesHandler.accept(sel);
+            }
+        });
     }
 
-    /** Establece el usuario autenticado para mostrarlo. */
     public void setUser(String nombreUsuario) {
-        userLabel.setText("Hola, " + nombreUsuario);
+        usuarioLabel.setText("Hola, " + nombreUsuario);
     }
 
-    /** Añade la lista de eventos a la tabla, calculando su estado. */
     public void setEventos(List<Evento> eventos) {
         tableModel.setRowCount(0);
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -94,32 +113,23 @@ public class DashboardView extends JPanel {
         }
     }
 
-    /** Registra listener para creación de evento. */
-    public void onCreateEvent(Runnable handler) {
-        createButton.addActionListener(e -> handler.run());
+    public void setCrearVisible(boolean visible) {
+        crearButton.setVisible(visible);
     }
 
-    /** Registra listener para logout. */
+    public void onCrearEvent(Runnable handler) {
+        crearButton.addActionListener(e -> handler.run());
+    }
+
     public void onLogout(Runnable handler) {
         logoutButton.addActionListener(e -> handler.run());
     }
 
-    /** Obtiene el índice de la fila seleccionada. */
-    public int getSelectedIndex() {
-        return eventsTable.getSelectedRow();
-    }
-
-    /** Callback interno para doble click. */
-    private Consumer<Integer> doubleClickHandler;
-
-    /** Registra listener para doble click en un evento (fila). */
-    public void onEventDoubleClick(Consumer<Integer> handler) {
+    public void onEventoDobleClick(Consumer<Integer> handler) {
         this.doubleClickHandler = handler;
     }
 
-    private void fireEventDoubleClick(int row) {
-        if (doubleClickHandler != null) {
-            doubleClickHandler.accept(row);
-        }
+    public void onVerDetalles(Consumer<Integer> handler) {
+        this.detallesHandler = handler;
     }
 }

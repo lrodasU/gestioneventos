@@ -1,6 +1,7 @@
 package com.gestioneventos.ui.presenter;
 
 import com.gestioneventos.application.AuthService;
+import com.gestioneventos.application.CancelarAsistenciaService;
 import com.gestioneventos.application.CrearEventoService;
 import com.gestioneventos.application.EliminarEventoService;
 import com.gestioneventos.application.ListarEventosService;
@@ -8,7 +9,6 @@ import com.gestioneventos.application.ListarUsuariosService;
 import com.gestioneventos.application.ModificarEventoService;
 import com.gestioneventos.application.NotificarService;
 import com.gestioneventos.application.RegistrarAsistenciaService;
-import com.gestioneventos.domain.Asistente;
 import com.gestioneventos.domain.Evento;
 import com.gestioneventos.domain.Organizador;
 import com.gestioneventos.domain.Usuario;
@@ -18,7 +18,6 @@ import com.gestioneventos.ui.view.DetalleEventoView;
 import com.gestioneventos.ui.view.LoginView;
 import com.gestioneventos.ui.view.CrearEventoView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,6 +31,7 @@ public class DashboardPresenter {
     private final ModificarEventoService modificarService;
     private final EliminarEventoService eliminarService;
     private final RegistrarAsistenciaService registrarService;
+    private final CancelarAsistenciaService cancelarService;
     private final NotificarService notificarService;
     private final MainFrame mainFrame;
     private final DashboardView view;
@@ -46,6 +46,7 @@ public class DashboardPresenter {
             ModificarEventoService modificarService,
             EliminarEventoService eliminarService,
             RegistrarAsistenciaService registrarService,
+            CancelarAsistenciaService cancelarService,
             NotificarService notificarService,
             DashboardView view,
             Usuario usuario) {
@@ -57,17 +58,19 @@ public class DashboardPresenter {
         this.modificarService = modificarService;
         this.eliminarService = eliminarService;
         this.registrarService = registrarService;
+        this.cancelarService = cancelarService;
         this.notificarService = notificarService;
         this.view = view;
         this.usuario = usuario;
 
-        initView();
+        inicializar();
         bindActions();
         loadEventos();
     }
 
-    private void initView() {
+    private void inicializar() {
         view.setUser(usuario.getNombre());
+        view.setCrearVisible(usuario instanceof Organizador);
     }
 
     private void bindActions() {
@@ -84,54 +87,59 @@ public class DashboardPresenter {
                     modificarService,
                     eliminarService,
                     registrarService,
+                    cancelarService,
                     notificarService);
             mainFrame.showPanel(loginView);
         });
 
-        view.onCreateEvent(() -> {
-            List<Organizador> organizadores = new ArrayList<>();
-            organizadores.add((Organizador) usuario);
-            List<Asistente> asistentes = new ArrayList<>();
-            // Navegar a creación de evento
-            CrearEventoView crearView = new CrearEventoView();
-            new CrearEventoPresenter(mainFrame,
-                    authService,
-                    listarService,
-                    listarUsuariosService,
-                    crearService,
-                    modificarService,
-                    eliminarService,
-                    registrarService,
-                    notificarService,
-                    organizadores,
-                    asistentes,
-                    crearView,
-                    usuario,
-                    null);
-            mainFrame.showPanel(crearView);
-        });
+        if (usuario instanceof Organizador) {
+            view.onCrearEvent(() -> {
+                // Navegar a creación de evento
+                CrearEventoView crearView = new CrearEventoView();
+                crearView.setModoCrear();
+                new CrearEventoPresenter(mainFrame,
+                        authService,
+                        listarService,
+                        listarUsuariosService,
+                        crearService,
+                        modificarService,
+                        eliminarService,
+                        registrarService,
+                        cancelarService,
+                        notificarService,
+                        crearView,
+                        usuario,
+                        null);
+                mainFrame.showPanel(crearView);
+            });
+        }
 
-        view.onEventDoubleClick(row -> {
-            Evento e = eventos.get(row);
-            DetalleEventoView detalleView = new DetalleEventoView();
-            new DetalleEventoPresenter(mainFrame,
-                    authService,
-                    listarService,
-                    listarUsuariosService,
-                    crearService,
-                    modificarService,
-                    eliminarService,
-                    registrarService,
-                    notificarService,
-                    detalleView,
-                    usuario,
-                    e);
-            mainFrame.showPanel(detalleView);
-        });
+        view.onEventoDobleClick(row -> navegarADetalles(row));
+
+        view.onVerDetalles(row -> navegarADetalles(row));
+    }
+
+    private void navegarADetalles(int row) {
+        Evento e = eventos.get(row);
+        DetalleEventoView detalleView = new DetalleEventoView();
+        new DetalleEventoPresenter(mainFrame,
+                authService,
+                listarService,
+                listarUsuariosService,
+                crearService,
+                modificarService,
+                eliminarService,
+                registrarService,
+                cancelarService,
+                notificarService,
+                detalleView,
+                usuario,
+                e);
+        mainFrame.showPanel(detalleView);
     }
 
     private void loadEventos() {
-        eventos = listarService.executeByUsuario(usuario.getId());
+        eventos = listarService.execute(usuario.getId());
         view.setEventos(eventos);
     }
 }

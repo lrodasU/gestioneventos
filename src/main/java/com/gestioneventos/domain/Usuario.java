@@ -48,4 +48,18 @@ public abstract class Usuario {
     private String hash(String raw) {
         return Integer.toHexString(raw.hashCode());
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Usuario))
+            return false;
+        return id.equals(((Usuario) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

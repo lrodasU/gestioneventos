@@ -1,6 +1,7 @@
 package com.gestioneventos.ui.presenter;
 
 import com.gestioneventos.application.AuthService;
+import com.gestioneventos.application.CancelarAsistenciaService;
 import com.gestioneventos.application.ListarEventosService;
 import com.gestioneventos.application.ListarUsuariosService;
 import com.gestioneventos.application.CrearEventoService;
@@ -29,6 +30,7 @@ public class LoginPresenter {
     private final ModificarEventoService modificarEventoService;
     private final EliminarEventoService eliminarEventoService;
     private final RegistrarAsistenciaService registrarAsistenciaService;
+    private final CancelarAsistenciaService cancelarService;
     private final NotificarService notificarService;
 
     public LoginPresenter(AuthService authService,
@@ -40,6 +42,7 @@ public class LoginPresenter {
             ModificarEventoService modificarEventoService,
             EliminarEventoService eliminarEventoService,
             RegistrarAsistenciaService registrarAsistenciaService,
+            CancelarAsistenciaService cancelarService,
             NotificarService notificarService) {
         this.authService = authService;
         this.view = view;
@@ -50,6 +53,7 @@ public class LoginPresenter {
         this.modificarEventoService = modificarEventoService;
         this.eliminarEventoService = eliminarEventoService;
         this.registrarAsistenciaService = registrarAsistenciaService;
+        this.cancelarService = cancelarService;
         this.notificarService = notificarService;
 
         // Registra el listener de login
@@ -78,6 +82,7 @@ public class LoginPresenter {
                     modificarEventoService,
                     eliminarEventoService,
                     registrarAsistenciaService,
+                    cancelarService,
                     notificarService,
                     dashboardView,
                     usuario);

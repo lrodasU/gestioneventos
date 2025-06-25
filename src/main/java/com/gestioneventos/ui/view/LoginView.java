@@ -65,6 +65,9 @@ public class LoginView extends JPanel {
         wrapper.add(content);
 
         add(wrapper, BorderLayout.CENTER);
+
+        emailField.addActionListener(e -> loginButton.doClick());
+        passwordField.addActionListener(e -> loginButton.doClick());
     }
 
     public void onLogin(ActionListener listener) {
