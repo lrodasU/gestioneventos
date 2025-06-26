@@ -9,6 +9,7 @@ import com.gestioneventos.application.ListarUsuariosService;
 import com.gestioneventos.application.ModificarEventoService;
 import com.gestioneventos.application.NotificarService;
 import com.gestioneventos.application.RegistrarAsistenciaService;
+import com.gestioneventos.application.TipoNotificacion;
 import com.gestioneventos.domain.Asistente;
 import com.gestioneventos.domain.Evento;
 import com.gestioneventos.domain.Organizador;
@@ -144,6 +145,7 @@ public class DetalleEventoPresenter {
 
     private void handleEliminar() {
         eliminarService.execute(evento.getId());
+        notificarService.execute(evento, null, TipoNotificacion.ELIMINACION);
         goBack();
     }
 }

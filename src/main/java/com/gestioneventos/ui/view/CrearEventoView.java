@@ -19,7 +19,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
-// Vista para creación de un nuevo evento.
+// Vista para creación o modificación de un evento
 public class CrearEventoView extends JPanel {
     private final RoundedTextField tituloField = new RoundedTextField(20);
     private final RoundedTextField ubicacionField = new RoundedTextField(20);
@@ -34,12 +34,16 @@ public class CrearEventoView extends JPanel {
 
     public CrearEventoView() {
         setLayout(new BorderLayout());
+        setBackground(UIConstants.BACKGROUND_COLOR);
 
         JPanel topBar = new JPanel(new BorderLayout());
+        topBar.setPreferredSize(new Dimension(0, UIConstants.TOPBAR_HEIGHT));
         topBar.setBackground(UIConstants.TOPBAR_COLOR);
+        topBar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         volverButton = new RoundedButton("Volver");
         topBar.add(volverButton, BorderLayout.WEST);
         headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD, UIConstants.TITLE_FONT_SIZE));
+        headerLabel.setForeground(Color.WHITE);
         topBar.add(headerLabel, BorderLayout.CENTER);
         topBar.add(Box.createHorizontalStrut(volverButton.getPreferredSize().width), BorderLayout.EAST);
         add(topBar, BorderLayout.NORTH);

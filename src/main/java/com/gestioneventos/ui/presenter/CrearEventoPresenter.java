@@ -9,6 +9,7 @@ import com.gestioneventos.application.ListarUsuariosService;
 import com.gestioneventos.application.ModificarEventoService;
 import com.gestioneventos.application.NotificarService;
 import com.gestioneventos.application.RegistrarAsistenciaService;
+import com.gestioneventos.application.TipoNotificacion;
 import com.gestioneventos.domain.Evento;
 import com.gestioneventos.domain.Organizador;
 import com.gestioneventos.domain.Asistente;
@@ -24,14 +25,14 @@ import java.util.stream.Collectors;
 public class CrearEventoPresenter {
     private final MainFrame mainFrame;
     private final AuthService authService;
-    private final ListarEventosService listarSvc;
+    private final ListarEventosService listarService;
     private final ListarUsuariosService listarUsuariosService;
-    private final CrearEventoService crearSvc;
-    private final ModificarEventoService modificarSvc;
-    private final EliminarEventoService eliminarSvc;
-    private final RegistrarAsistenciaService registrarSvc;
+    private final CrearEventoService crearService;
+    private final ModificarEventoService modificarService;
+    private final EliminarEventoService eliminarService;
+    private final RegistrarAsistenciaService registrarService;
     private final CancelarAsistenciaService cancelarService;
-    private final NotificarService notificarSvc;
+    private final NotificarService notificarService;
     private final CrearEventoView view;
     private final Usuario usuario;
     private final Evento eventoOriginal;
@@ -53,14 +54,14 @@ public class CrearEventoPresenter {
     ) {
         this.mainFrame = mainFrame;
         this.authService = authService;
-        this.listarSvc = listarService;
+        this.listarService = listarService;
         this.listarUsuariosService = listarUsuariosService;
-        this.crearSvc = crearService;
-        this.modificarSvc = modificarService;
-        this.eliminarSvc = eliminarService;
-        this.registrarSvc = registrarService;
+        this.crearService = crearService;
+        this.modificarService = modificarService;
+        this.eliminarService = eliminarService;
+        this.registrarService = registrarService;
         this.cancelarService = cancelarService;
-        this.notificarSvc = notificarService;
+        this.notificarService = notificarService;
         this.view = view;
         this.usuario = usuario;
         this.eventoOriginal = eventoACambiar;
@@ -99,15 +100,16 @@ public class CrearEventoPresenter {
                 .collect(Collectors.toList());
 
         if (eventoOriginal == null) {
-            crearSvc.execute(
+            Evento e = crearService.execute(
                     view.getTitulo(),
                     view.getFecha(),
                     view.getUbicacion(),
                     view.getDescripcion(),
                     orgs,
                     asis);
+            notificarService.execute(null, e, TipoNotificacion.CREACION);
         } else {
-            modificarSvc.execute(
+            Evento e = modificarService.execute(
                     eventoOriginal.getId(),
                     view.getTitulo(),
                     view.getFecha(),
@@ -115,6 +117,7 @@ public class CrearEventoPresenter {
                     view.getDescripcion(),
                     orgs,
                     asis);
+            notificarService.execute(eventoOriginal, e, TipoNotificacion.MODIFICACION);
         }
         navergarAlDashboard();
     }
@@ -124,14 +127,14 @@ public class CrearEventoPresenter {
         new DashboardPresenter(
                 mainFrame,
                 authService,
-                listarSvc,
+                listarService,
                 listarUsuariosService,
-                crearSvc,
-                modificarSvc,
-                eliminarSvc,
-                registrarSvc,
+                crearService,
+                modificarService,
+                eliminarService,
+                registrarService,
                 cancelarService,
-                notificarSvc,
+                notificarService,
                 dashView,
                 usuario);
         mainFrame.showPanel(dashView);

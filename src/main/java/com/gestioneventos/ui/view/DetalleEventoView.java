@@ -6,6 +6,7 @@ import com.gestioneventos.ui.util.UIConstants;
 import com.gestioneventos.domain.Evento;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
@@ -17,10 +18,10 @@ public class DetalleEventoView extends JPanel {
     private final JLabel tituloLabel = new JLabel();
     private final JLabel fechaLabel = new JLabel();
     private final JLabel ubicacionLabel = new JLabel();
-    private final JTextArea descripcionArea = new JTextArea();
-    private final JTable asistenciaTable;
+    private final JLabel descripcionLabel = new JLabel();
+    private final CustomTable asistenciaTable;
     private final DefaultTableModel asistenciaModel;
-    private final JTable organizadoresTable;
+    private final CustomTable organizadoresTable;
     private final DefaultTableModel organizadoresModel;
     private final RoundedButton modificarButton = new RoundedButton("Modificar");
     private final RoundedButton eliminarButton = new RoundedButton("Eliminar");
@@ -33,19 +34,19 @@ public class DetalleEventoView extends JPanel {
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setPreferredSize(new Dimension(0, UIConstants.TOPBAR_HEIGHT));
         topBar.setBackground(UIConstants.TOPBAR_COLOR);
+        topBar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         backButton = new RoundedButton("Volver");
         topBar.add(backButton, BorderLayout.WEST);
-        JLabel header = new JLabel("Detalle Evento", SwingConstants.CENTER);
-        header.setFont(header.getFont().deriveFont(Font.BOLD, UIConstants.TITLE_FONT_SIZE));
-        topBar.add(header, BorderLayout.CENTER);
+        JLabel headerLabel = new JLabel("Detalle Evento", SwingConstants.CENTER);
+        headerLabel.setForeground(Color.WHITE);
+        headerLabel.setFont(headerLabel.getFont().deriveFont(Font.BOLD, UIConstants.TITLE_FONT_SIZE));
+        topBar.add(headerLabel, BorderLayout.CENTER);
         topBar.add(Box.createHorizontalStrut(backButton.getPreferredSize().width), BorderLayout.EAST);
         add(topBar, BorderLayout.NORTH);
 
         JPanel content = new JPanel(new BorderLayout());
         content.setBackground(UIConstants.BACKGROUND_COLOR);
-        content.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.GRAY),
-                BorderFactory.createEmptyBorder(20, 20, 20, 20)));
+        content.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JPanel datosPanel = new JPanel();
         datosPanel.setLayout(new BoxLayout(datosPanel, BoxLayout.Y_AXIS));
@@ -54,13 +55,7 @@ public class DetalleEventoView extends JPanel {
         tituloLabel.setFont(tituloLabel.getFont().deriveFont(Font.BOLD, UIConstants.LABEL_FONT_SIZE));
         fechaLabel.setFont(fechaLabel.getFont().deriveFont(UIConstants.LABEL_FONT_SIZE));
         ubicacionLabel.setFont(ubicacionLabel.getFont().deriveFont(UIConstants.LABEL_FONT_SIZE));
-
-        descripcionArea.setFont(descripcionArea.getFont().deriveFont(UIConstants.LABEL_FONT_SIZE));
-        descripcionArea.setLineWrap(true);
-        descripcionArea.setWrapStyleWord(true);
-        descripcionArea.setEditable(false);
-        JScrollPane descScroll = new JScrollPane(descripcionArea);
-        descScroll.setBorder(BorderFactory.createEmptyBorder());
+        descripcionLabel.setFont(descripcionLabel.getFont().deriveFont(UIConstants.LABEL_FONT_SIZE));
 
         datosPanel.add(tituloLabel);
         datosPanel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -68,7 +63,7 @@ public class DetalleEventoView extends JPanel {
         datosPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         datosPanel.add(ubicacionLabel);
         datosPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        datosPanel.add(descScroll);
+        datosPanel.add(descripcionLabel);
         datosPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         content.add(datosPanel, BorderLayout.NORTH);
@@ -80,11 +75,17 @@ public class DetalleEventoView extends JPanel {
             }
         };
         asistenciaTable = new CustomTable(asistenciaModel);
+        asistenciaTable.setBackground(UIConstants.BACKGROUND_COLOR);
+        asistenciaTable.setGridColor(UIConstants.BACKGROUND_COLOR);
         JScrollPane asisScroll = new JScrollPane(asistenciaTable);
         asisScroll.setBorder(BorderFactory.createTitledBorder("Asistentes"));
         TableColumnModel asisCols = asistenciaTable.getColumnModel();
         asisCols.getColumn(0).setMaxWidth(50);
         asisCols.getColumn(1).setPreferredWidth(asisScroll.getPreferredSize().width - 50);
+
+        DefaultTableCellRenderer headerRenderer = (DefaultTableCellRenderer) asistenciaTable.getTableHeader()
+                .getDefaultRenderer();
+        headerRenderer.setHorizontalAlignment(SwingConstants.LEFT);
 
         organizadoresModel = new DefaultTableModel(new String[] { "#", "Nombre" }, 0) {
             @Override
@@ -93,12 +94,18 @@ public class DetalleEventoView extends JPanel {
             }
         };
         organizadoresTable = new CustomTable(organizadoresModel);
+        organizadoresTable.setBackground(UIConstants.BACKGROUND_COLOR);
+        organizadoresTable.setGridColor(UIConstants.BACKGROUND_COLOR);
         JScrollPane orgScroll = new JScrollPane(organizadoresTable);
         orgScroll.setBorder(BorderFactory.createTitledBorder("Organizadores"));
 
         TableColumnModel orgCols = organizadoresTable.getColumnModel();
         orgCols.getColumn(0).setMaxWidth(50);
         orgCols.getColumn(1).setPreferredWidth(orgScroll.getPreferredSize().width - 50);
+
+        headerRenderer = (DefaultTableCellRenderer) organizadoresTable.getTableHeader()
+                .getDefaultRenderer();
+        headerRenderer.setHorizontalAlignment(SwingConstants.LEFT);
 
         JPanel tablasPanel = new JPanel(new GridLayout(1, 2, 20, 0));
         tablasPanel.setBackground(UIConstants.BACKGROUND_COLOR);
@@ -145,7 +152,7 @@ public class DetalleEventoView extends JPanel {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         fechaLabel.setText("Fecha: " + e.getFecha().format(fmt));
         ubicacionLabel.setText("Ubicación: " + e.getUbicacion());
-        descripcionArea.setText(e.getDescripcion());
+        descripcionLabel.setText(e.getDescripcion());
 
         asistenciaModel.setRowCount(0);
         int ai = 1;

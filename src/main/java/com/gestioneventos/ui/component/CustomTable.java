@@ -2,6 +2,7 @@ package com.gestioneventos.ui.component;
 
 import com.gestioneventos.ui.util.UIConstants;
 
+import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.JTable;
@@ -23,10 +24,13 @@ public class CustomTable extends JTable {
 
         setShowGrid(true);
         setGridColor(UIConstants.GRID_COLOR);
+        setBackground(Color.WHITE);
 
         getTableHeader().setReorderingAllowed(false);
+
         DefaultTableCellRenderer headerRenderer = (DefaultTableCellRenderer) getTableHeader().getDefaultRenderer();
         headerRenderer.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
+
         JTableHeader header = getTableHeader();
         header.setFont(header.getFont().deriveFont(Font.BOLD, UIConstants.LABEL_FONT_SIZE));
 

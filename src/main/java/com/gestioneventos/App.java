@@ -19,26 +19,31 @@ import javax.swing.SwingUtilities;
 
 public class App {
     public static void main(String[] args) {
-        JsonStorageAdapter storage = new JsonStorageAdapter(
+        JsonStorageAdapter storageAdapter = new JsonStorageAdapter(
                 "gestioneventos/data/usuarios.json",
                 "gestioneventos/data/eventos.json");
 
-        EmailAdapter dummyMailer = new EmailAdapter() {
+        EmailAdapter emailAdapterPrueba = new EmailAdapter() {
+            // Dado el contexto de prueba, no se enviarán correos reales.
+            // Se implementó una clase para encargarse de enviar correos reales
+            // de forma que pueda ser utilizado en un contexto real.
+            // Como todos los usuarios tienen emails falsos, esta clase imprime 
+            // el contenido del mail en consola.
             @Override
             public void sendEmail(String to, String subject, String body) {
-                // No-op para pruebas tempranas
+                System.out.println("Email enviado para: " + to + " - " + subject + "\n" + body);
             }
         };
 
-        AuthService authService = new AuthService(storage);
-        ListarEventosService listarEventosService = new ListarEventosService(storage);
-        ListarUsuariosService listarUsuariosService = new ListarUsuariosService(storage);
-        CrearEventoService crearService = new CrearEventoService(storage);
-        ModificarEventoService modificarService = new ModificarEventoService(storage);
-        EliminarEventoService eliminarService = new EliminarEventoService(storage);
-        RegistrarAsistenciaService registrarService = new RegistrarAsistenciaService(storage);
-        CancelarAsistenciaService cancelarService = new CancelarAsistenciaService(storage);
-        NotificarService notificarService = new NotificarService(dummyMailer);
+        AuthService authService = new AuthService(storageAdapter);
+        ListarEventosService listarEventosService = new ListarEventosService(storageAdapter);
+        ListarUsuariosService listarUsuariosService = new ListarUsuariosService(storageAdapter);
+        CrearEventoService crearService = new CrearEventoService(storageAdapter);
+        ModificarEventoService modificarService = new ModificarEventoService(storageAdapter);
+        EliminarEventoService eliminarService = new EliminarEventoService(storageAdapter);
+        RegistrarAsistenciaService registrarService = new RegistrarAsistenciaService(storageAdapter);
+        CancelarAsistenciaService cancelarService = new CancelarAsistenciaService(storageAdapter);
+        NotificarService notificarService = new NotificarService(emailAdapterPrueba);
 
         SwingUtilities.invokeLater(() -> {
             MainFrame mainFrame = new MainFrame();

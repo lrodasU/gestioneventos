@@ -27,7 +27,7 @@ public class RoundedSpinner extends JSpinner {
         g2.setRenderingHint(
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(UIConstants.BACKGROUND_COLOR);
+        g2.setColor(UIConstants.FIELD_BACKGROUND_COLOR);
         g2.fill(new RoundRectangle2D.Float(
                 0, 0,
                 getWidth() - 1,

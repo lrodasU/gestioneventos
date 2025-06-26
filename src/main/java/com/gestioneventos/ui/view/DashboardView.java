@@ -6,7 +6,9 @@ import com.gestioneventos.ui.util.UIConstants;
 import com.gestioneventos.domain.Evento;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -33,14 +35,16 @@ public class DashboardView extends JPanel {
         topBar.setBackground(UIConstants.TOPBAR_COLOR);
         topBar.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         usuarioLabel.setFont(usuarioLabel.getFont().deriveFont(UIConstants.LABEL_FONT_SIZE));
+        usuarioLabel.setForeground(Color.WHITE);
         topBar.add(usuarioLabel, BorderLayout.WEST);
         topBar.add(logoutButton, BorderLayout.EAST);
         add(topBar, BorderLayout.NORTH);
 
-        JPanel actionBar = new JPanel();
-        actionBar.setLayout(new BoxLayout(actionBar, BoxLayout.Y_AXIS));
-        actionBar.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
-        
+        JPanel barraLateral = new JPanel();
+        barraLateral.setLayout(new BoxLayout(barraLateral, BoxLayout.Y_AXIS));
+        barraLateral.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+        barraLateral.setBackground(UIConstants.BACKGROUND_COLOR);
+
         Dimension btnSize = crearButton.getPreferredSize();
         crearButton.setPreferredSize(btnSize);
         crearButton.setMaximumSize(btnSize);
@@ -48,12 +52,12 @@ public class DashboardView extends JPanel {
         detallesButton.setMaximumSize(btnSize);
         detallesButton.setMinimumSize(btnSize);
 
-        actionBar.add(crearButton);
-        actionBar.add(Box.createRigidArea(new Dimension(0, 10)));
-        actionBar.add(detallesButton);
+        barraLateral.add(crearButton);
+        barraLateral.add(Box.createRigidArea(new Dimension(0, 10)));
+        barraLateral.add(detallesButton);
         btnSize = crearButton.getPreferredSize();
         detallesButton.setPreferredSize(btnSize);
-        add(actionBar, BorderLayout.WEST);
+        add(barraLateral, BorderLayout.WEST);
 
         String[] cols = { "Título", "Fecha", "Ubicación", "Estado" };
         tableModel = new DefaultTableModel(cols, 0) {
@@ -63,8 +67,14 @@ public class DashboardView extends JPanel {
             }
         };
         eventosTable = new CustomTable(tableModel);
+
+        DefaultTableCellRenderer headerRenderer = (DefaultTableCellRenderer) eventosTable.getTableHeader()
+                .getDefaultRenderer();
+        headerRenderer.setHorizontalAlignment(SwingConstants.LEFT);
+
         eventosTable.setFillsViewportHeight(true);
         JScrollPane scrollPane = new JScrollPane(eventosTable);
+        scrollPane.setBorder(BorderFactory.createLineBorder(UIConstants.BACKGROUND_COLOR));
 
         eventosTable.addMouseListener(new MouseAdapter() {
             @Override

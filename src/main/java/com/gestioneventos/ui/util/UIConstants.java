@@ -8,14 +8,15 @@ public final class UIConstants {
     }
 
     // Colores
-    public static final Color PRIMARY_COLOR = new Color(200, 200, 255);
-    public static final Color HOVER_COLOR = new Color(180, 180, 230);
+    public static final Color PRIMARY_COLOR = Color.decode("#3498DB");
+    public static final Color HOVER_COLOR = Color.decode("#2980B9");
+    public static final Color BACKGROUND_COLOR = Color.decode("#ECF0F1");
     public static final Color BORDER_COLOR = Color.GRAY;
     public static final Color BUTTON_BORDER = Color.DARK_GRAY;
-    public static final Color ERROR_COLOR = Color.RED;
-    public static final Color BACKGROUND_COLOR = Color.WHITE;
-    public static final Color GRID_COLOR = Color.GRAY;
-    public static final Color TOPBAR_COLOR = Color.GRAY;
+    public static final Color ERROR_COLOR = Color.decode("#E74C3C");
+    public static final Color FIELD_BACKGROUND_COLOR = Color.WHITE;
+    public static final Color GRID_COLOR = Color.WHITE;
+    public static final Color TOPBAR_COLOR = Color.decode("#2C3E50");
 
     // Radios
     public static final int FIELD_RADIUS = 15;

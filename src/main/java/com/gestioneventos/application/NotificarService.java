@@ -4,17 +4,13 @@ import com.gestioneventos.domain.Asistente;
 import com.gestioneventos.domain.Evento;
 import com.gestioneventos.infrastructure.EmailAdapter;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
-/**
- * Servicio que notifica por correo:
- * - a un asistente nuevo cuando se registra en un evento
- * - a todos los asistentes cuando un evento cambia
- * - o a todos los asistentes cuando un evento se cancela
- * 
- * Utiliza sobrecarga para determinar cuando debe mandar un solo mail
- * y cuando multiples
- */
+// Servicio que notifica por correo:
+// - a un asistente nuevo cuando se registra en un evento
+// - a todos los asistentes cuando un evento cambia
+// - o a todos los asistentes cuando un evento se cancela
 public class NotificarService {
 
     private final EmailAdapter emailAdapter;
@@ -23,64 +19,51 @@ public class NotificarService {
         this.emailAdapter = Objects.requireNonNull(emailAdapter, "EmailAdapter no puede ser null");
     }
 
-    // Notifica al asistente recién registrado en el evento
-    public void execute(Evento evento, TipoNotificacion tipo, Asistente nuevoAsistente) {
-        Objects.requireNonNull(evento, "El evento no puede ser null");
-        Objects.requireNonNull(tipo, "El tipo de notificación no puede ser null");
-        Objects.requireNonNull(nuevoAsistente, "El asistente no puede ser null");
-
-        if (tipo != TipoNotificacion.CREACION) {
-            throw new IllegalArgumentException(
-                    "Este método solo admite CREACION, se recibió: " + tipo);
-        }
-
-        String subject = "Confirmación de registro en: " + evento.getTitulo();
-        String template = "Hola %s,%n%n" +
-                "Te has registrado correctamente en el evento \"%s\" (ID=%s).%n" +
-                "Detalles:%n" +
-                " • Fecha: %s%n" +
-                " • Ubicación: %s%n%n" +
-                "¡Te esperamos!%nEquipo GestiónEventos";
-
-        String body = String.format(
-                template,
-                nuevoAsistente.getNombre(),
-                evento.getTitulo(),
-                evento.getId(),
-                evento.getFecha(),
-                evento.getUbicacion());
-        emailAdapter.sendEmail(nuevoAsistente.getEmail(), subject, body);
-    }
-
-    // Notifica a todos los asistentes cuando se modifica o elimina un evento
-    public void execute(Evento evento, TipoNotificacion tipo) {
-        Objects.requireNonNull(evento, "El evento no puede ser null");
+    // Notifica según el tipo:
+    // - CREACION: se envía a todos asistentes de eventoActual
+    // - ELIMINACION: se envía a todos asistentes de eventoAnterior
+    // - MODIFICACION: se comparan asistentes entre eventoAnterior y
+    // eventoActual
+    public void execute(Evento eventoAnterior, Evento eventoActual, TipoNotificacion tipo) {
         Objects.requireNonNull(tipo, "El tipo de notificación no puede ser null");
 
         switch (tipo) {
-            case MODIFICACION:
-                sendModificationMails(evento);
+            case CREACION:
+                validar(eventoActual);
+                enviarCreacion(eventoActual);
                 break;
+
             case ELIMINACION:
-                sendCancellationMails(evento);
+                validar(eventoAnterior);
+                enviarEliminacion(eventoAnterior);
                 break;
+
+            case MODIFICACION:
+                validar(eventoAnterior);
+                validar(eventoActual);
+                enviarModificacion(eventoAnterior, eventoActual);
+                break;
+
             default:
-                throw new IllegalArgumentException(
-                        "Este método no admite " + tipo + ", solo MODIFICACION o ELIMINACION");
+                throw new IllegalArgumentException("Tipo no soportado: " + tipo);
         }
     }
 
-    private void sendModificationMails(Evento evento) {
-        String subject = "Actualización en el evento: " + evento.getTitulo();
-        String template = "Hola %s,%n%n" +
-                "El evento \"%s\" (ID=%s) ha sufrido cambios:%n" +
-                " • Fecha: %s%n" +
-                " • Ubicación: %s%n%n" +
-                "Por favor revisa los detalles actualizados.%nEquipo GestiónEventos";
+    private void validar(Evento evento) {
+        if (evento == null) {
+            throw new IllegalArgumentException("Evento para notificar no puede ser null");
+        }
+    }
+
+    private void enviarCreacion(Evento evento) {
+        String subject = "Nuevo evento: " + evento.getTitulo();
+        String template = "Hola %s,\n\n" +
+                "Estás invitado a un nuevo evento: '%s' (ID=%s).\n" +
+                "Fecha: %s, Ubicación: %s\n\n" +
+                "¡No te lo pierdas!\n";
 
         for (Asistente a : evento.getAsistentes()) {
-            String body = String.format(
-                    template,
+            String body = String.format(template,
                     a.getNombre(),
                     evento.getTitulo(),
                     evento.getId(),
@@ -90,18 +73,82 @@ public class NotificarService {
         }
     }
 
-    private void sendCancellationMails(Evento evento) {
-        String subject = "Cancelación del evento: " + evento.getTitulo();
-        String template = "Hola %s,%n%n" +
-                "Lamentamos informarte que el evento \"%s\" (ID=%s) ha sido cancelado.%n%n" +
-                "Sentimos las molestias, esperamos verte en futuros eventos.%nEquipo GestiónEventos";
+    private void enviarEliminacion(Evento evento) {
+        String subject = "Evento cancelado: " + evento.getTitulo();
+        String template = "Hola %s,\n\n" +
+                "El evento '%s' (ID=%s) ha sido cancelado.\n\n" +
+                "Lo sentimos mucho.\n";
 
         for (Asistente a : evento.getAsistentes()) {
-            String body = String.format(
-                    template,
+            String body = String.format(template,
                     a.getNombre(),
                     evento.getTitulo(),
                     evento.getId());
+            emailAdapter.sendEmail(a.getEmail(), subject, body);
+        }
+    }
+
+    private void enviarModificacion(Evento original, Evento modificado) {
+        Set<String> idsOriginal = original.getAsistentes().stream()
+                .map(Asistente::getId).collect(Collectors.toSet());
+        Set<String> idsModificado = modificado.getAsistentes().stream()
+                .map(Asistente::getId).collect(Collectors.toSet());
+
+        Set<String> nuevos = new HashSet<>(idsModificado);
+        nuevos.removeAll(idsOriginal);
+        Set<String> removidos = new HashSet<>(idsOriginal);
+        removidos.removeAll(idsModificado);
+
+        Map<String, Asistente> mapaAnt = original.getAsistentes().stream()
+                .collect(Collectors.toMap(Asistente::getId, a -> a));
+        Map<String, Asistente> mapaAct = modificado.getAsistentes().stream()
+                .collect(Collectors.toMap(Asistente::getId, a -> a));
+
+        String templateNuevo = "Hola %s,\n\n" +
+                "Estás invitado a un nuevo evento: '%s' (ID=%s).\n" +
+                "Fecha: %s, Ubicación: %s\n\n" +
+                "¡No te lo pierdas!\n";
+
+        // Notificar solo cambios en asistentes
+        for (String id : nuevos) {
+            Asistente a = mapaAct.get(id);
+            emailAdapter.sendEmail(a.getEmail(),
+                    "Nuevo evento: " + modificado.getTitulo(),
+                    String.format(templateNuevo,
+                            a.getNombre(),
+                            modificado.getTitulo(),
+                            modificado.getId(),
+                            modificado.getFecha(),
+                            modificado.getUbicacion()));
+        }
+        for (String id : removidos) {
+            Asistente a = mapaAnt.get(id);
+            emailAdapter.sendEmail(a.getEmail(),
+                    "Baja de evento: " + original.getTitulo(),
+                    String.format("Hola %s,\n\nHas sido dado de baja del evento '%s' (ID=%s).\n", a.getNombre(),
+                            original.getTitulo(), original.getId()));
+        }
+
+        // Si no se detectan cambios en los detalles del evento, no se notifica a los
+        // asistentes anteriores
+        if (Objects.equals(original.getTitulo(), modificado.getTitulo())
+                || Objects.equals(original.getDescripcion(), modificado.getDescripcion())
+                || Objects.equals(original.getFecha(), modificado.getFecha())
+                || Objects.equals(original.getUbicacion(), modificado.getUbicacion())) {
+            return;
+        }
+
+        String subject = "Actualización evento: " + modificado.getTitulo();
+        String templateActualizado = "Hola %s,\n\n" +
+                "El evento '%s' (ID=%s) ha sido actualizado:\n" +
+                " • Fecha: %s\n" +
+                " • Ubicación: %s\n\n";
+        for (String id : idsModificado) {
+            // Solo asistentes actuales
+            Asistente a = mapaAct.get(id);
+            String body = String.format(templateActualizado,
+                    a.getNombre(), modificado.getTitulo(), modificado.getId(),
+                    modificado.getFecha(), modificado.getUbicacion());
             emailAdapter.sendEmail(a.getEmail(), subject, body);
         }
     }

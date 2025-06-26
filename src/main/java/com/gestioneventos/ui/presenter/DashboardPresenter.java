@@ -20,9 +20,7 @@ import com.gestioneventos.ui.view.CrearEventoView;
 
 import java.util.List;
 
-/**
- * Presenter para la pantalla de Dashboard.
- */
+// Presenter para la pantalla de Dashboard
 public class DashboardPresenter {
     private final AuthService authService;
     private final ListarEventosService listarService;

@@ -1,6 +1,8 @@
 package com.gestioneventos.ui.view;
 
 import com.gestioneventos.ui.component.*;
+import com.gestioneventos.ui.util.UIConstants;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -43,8 +45,8 @@ public class LoginView extends JPanel {
         loginButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         loginButton.setMaximumSize(loginButton.getPreferredSize());
 
-        errorLabel.setForeground(Color.RED);
-        errorLabel.setFont(errorLabel.getFont().deriveFont(Font.PLAIN, 18f));
+        errorLabel.setForeground(UIConstants.ERROR_COLOR);
+        errorLabel.setFont(errorLabel.getFont().deriveFont(Font.PLAIN, UIConstants.ERROR_FONT_SIZE));
         errorLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         content.add(titleLabel);
@@ -62,6 +64,7 @@ public class LoginView extends JPanel {
         content.add(errorLabel);
 
         JPanel wrapper = new JPanel(new GridBagLayout());
+        wrapper.setBackground(UIConstants.BACKGROUND_COLOR);
         wrapper.add(content);
 
         add(wrapper, BorderLayout.CENTER);
