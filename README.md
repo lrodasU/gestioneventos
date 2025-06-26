@@ -1,8 +1,9 @@
 # 🎓 Sistema de Gestión de Eventos
 
-Este repositorio contiene el código fuente del **Trabajo Práctico Obligatorio (TPO)** de la materia *Paradigma Orientado a Objetos*.
+Este repositorio contiene el código fuente del **Trabajo Práctico Obligatorio (TPO)** de la materia *Paradigma Orientado a Objetos* de la carrera **Licenciatura en Gestión de Tecnología de la Información** en la **Universidad Argentina De La Empresa (UADE)**.
 
-> 📄 **Toda la documentación del proyecto se encuentra en el archivo:**  
+
+# 📄 **Documentación del proyecto**  
 > [**Informe Trabajo Práctico Obligatorio.pdf**](./Informe%20Trabajo%20Pr%C3%A1ctico%20Obligatorio.pdf)
 
 Incluye:
